@@ -6,6 +6,11 @@ function is_in_path {
     builtin type -P "$1" &> /dev/null
 }
 
+function dump_requirements {
+    echo "install git first"
+    exit 1
+}
+
 function setup_zshrc {
     sl="$HOME/.zshrc"
     if [ -L ${sl} ]; then
@@ -147,6 +152,8 @@ function setup_bin {
         ln -s "$(pwd -P)/bin/nix-go" "$HOME/bin/"
     fi
 }
+
+is_in_path git || dump_requirements
 
 echo "#################"
 echo "##     ZSH     ##"
