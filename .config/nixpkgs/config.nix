@@ -55,7 +55,6 @@ in {
         emacsNativeComp
         gnutls
         librsvg
-        libvterm
         libxml2
         html-tidy
         shellcheck
@@ -71,7 +70,9 @@ in {
         gnumake
         
         sqlite
-      ];
+      ] ++ (if pkgs.system == "aarch64-darwin"
+        then [ ]
+        else [ libvterm ]);
     };
 
     myDesktop = with pkgs; buildEnv {
