@@ -102,6 +102,11 @@ echo "#################"
 echo "##     ZSH     ##"
 echo "#################"
 install_link .zshrc || true
+if [[ -d $HOME/.oh-my-zsh ]]; then
+    echo "oh-my-zsh already installed"
+else
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
 
 echo
 echo "#################"
