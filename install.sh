@@ -144,7 +144,8 @@ else
     install_doom_emacs
 fi
 
-install_link .doom.d && $HOME/.emacs.d/bin/doom sync || true
+install_link .doom.d || true
+$HOME/.emacs.d/bin/doom sync
 
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
