@@ -115,5 +115,5 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
 alias ls='exa'
-alias cat='bat'
+#alias cat='bat'
 
