@@ -46,6 +46,8 @@ in {
         unzip
         zip
         nixfmt
+        bat
+        exa
 
         python3Full
         vimHugeX
