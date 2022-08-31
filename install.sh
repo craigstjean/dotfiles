@@ -113,6 +113,7 @@ echo "#################"
 echo "##     NIX     ##"
 echo "#################"
 is_in_path nix-env && echo "nix already installed" || install_nix
+. /home/craig/.ni-profile/etc/profile.d/nix.sh
 install_link .config/nixpkgs && update_nixpkgs || true
 setup_nixfonts
 
@@ -180,5 +181,6 @@ echo
 echo "#################"
 echo "##  User bin   ##"
 echo "#################"
+mkdir -p $HOME/bin
 install_link bin/nix-go || true
 
