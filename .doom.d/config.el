@@ -74,3 +74,10 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+(setq beacon-blink-when-window-scrolls t
+      beacon-blink-when-window-changes t
+      beacon-blink-when-point-moves t
+      beacon-push-mark 10)
+(beacon-mode 1)
+
