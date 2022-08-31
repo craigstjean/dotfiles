@@ -69,8 +69,6 @@ in {
         gnumake
         
         sqlite
-
-        vscode
       ];
     };
 
@@ -91,6 +89,13 @@ in {
         powerline-fonts
         source-code-pro
         ubuntu_font_family
+      ];
+    };
+
+    myVscode = with pkgs; buildEnv {
+      name = "my-vscode";
+      paths = [
+        vscode
       ];
     };
 
