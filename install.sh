@@ -62,8 +62,18 @@ function update_nixpkgs {
     echo "updating nix my-packages"
     nix-env -i my-packages
 
-    echo "updating nix my-desktop"
-    nix-env -i my-desktop
+    case "$OSTYPE" in
+        linux*)
+            if grep -qi microsoft /proc/version; then
+                # WSL
+                echo "updating nix my-desktop"
+                nix-env -i my-desktop
+            fi
+            ;;
+        *)
+            echo "skipping nix my-desktop"
+            ;;
+    esac
 }
 
 function setup_nixfonts {
