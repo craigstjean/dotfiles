@@ -3,14 +3,13 @@
 set -e
 
 envs=$(grep 'my[A-Za-z0-9]* = with pkgs' $HOME/.config/nixpkgs/config.nix | sed 's/^ *\(my[A-Za-z0-9]*\) = with.*$/\1/' | xargs)
-echo $envs
 IFS=" " read -r -a arrenvs <<<"$envs"
 
 for i in "${!arrenvs[@]}"; do
     if [ $i -gt 2 ]; then
         prettyname="${arrenvs[$i]}"
         prettyname=$(echo $prettyname | sed 's/^my\(.*\)$/\1/' | tr '[:upper:]' '[:lower:]')
-	echo "$(($i-2)): $prettyname"
+        echo "$(($i-2)): $prettyname"
     fi
 done
 
