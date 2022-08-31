@@ -6,6 +6,8 @@ let
 in {
   allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg)
   [
+    "rar"
+    "unrar"
     "vscode"
   ];
 
@@ -29,6 +31,7 @@ in {
     fira-code
     fira-code-symbols
     powerline-fonts
+    powerline-symbols
     source-code-pro
     ubuntu_font_family
   ];
@@ -39,40 +42,51 @@ in {
       name = "my-packages";
 
       paths = [
-        fd
-        ripgrep
-        fzf
-        fzf-zsh
-        unzip
-        zip
         nixfmt
+
         bat
         exa
+        fd
+        fzf
+        fzf-zsh
+        p7zip
+        pkg-config
+        readline
+        ripgrep
+        rlwrap
+        unrar
+        unzip
+        zip
+
+        fish
+        powershell
 
         python3Full
         vimHugeX
 
-        emacsNativeComp
-        gnutls
-        librsvg
-        libxml2
-        html-tidy
-        shellcheck
-        pandoc
-        graphviz-nox
-        imagemagick
-        go_1_18
-        golangci-lint
-        jansson
         aspell
-        hunspell
         cmake
         gnumake
+        gnutls
+        go_1_18
+        golangci-lint
+        graphviz-nox
+        html-tidy
+        hunspell
+        imagemagick
+        jansson
+        librsvg
+        libxml2
+        pandoc
+        shellcheck
+        emacsNativeComp
         
         sqlite
       ] ++ (if pkgs.system == "aarch64-darwin"
-        then [ ]
-        else [ libvterm ]);
+      then [
+        #macvim
+        #vlc
+      ] else [ libvterm ]);
     };
 
     myDesktop = with pkgs; buildEnv {
@@ -82,17 +96,7 @@ in {
         at-spi2-core
 
         fontconfig
-        dejavu_fonts
-        noto-fonts
-        noto-fonts-cjk
-        noto-fonts-emoji
-        liberation_ttf
-        fira-code
-        fira-code-symbols
-        powerline-fonts
-        source-code-pro
-        ubuntu_font_family
-      ];
+      ] ++ fonts.fonts;
     };
 
     myVscode = with pkgs; buildEnv {
@@ -110,16 +114,18 @@ in {
         autogen
         autoconf
         automake
+        protobuf
       ];
     };
 
     myDlang = with pkgs; buildEnv {
       name = "my-dlang";
       paths = [
-        dmd
         dub
         ldc
-      ];
+      ] ++ (if pkgs.system == "aarch64-darwin"
+      then [ ]
+      else [ dmd ]);
     };
 
     myElixir = with pkgs; buildEnv {
@@ -127,14 +133,30 @@ in {
       paths = [
         erlang
         elixir
-        inotify-tools
-      ];
+      ] ++ (if pkgs.system == "aarch64-darwin"
+      then [ ]
+      else [ inotify-tools ]);
     };
 
     myDotnet = with pkgs; buildEnv {
       name = "my-dotnet";
       paths = [
         dotnet-sdk
+      ];
+    };
+
+    myRuby = with pkgs; buildEnv {
+      name = "my-ruby";
+      paths = [
+        rbenv
+      ];
+    };
+
+    myLisp = with pkgs; buildEnv {
+      name = "my-lisp";
+      paths = [
+        sbcl
+        lispPackages.quicklisp
       ];
     };
   };

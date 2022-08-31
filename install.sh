@@ -112,8 +112,16 @@ echo
 echo "#################"
 echo "##     NIX     ##"
 echo "#################"
+if [[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]]; then
+    . $HOME/.nix-profile/etc/profile.d/nix.sh
+fi
 is_in_path nix-env && echo "nix already installed" || install_nix
-. /home/craig/.ni-profile/etc/profile.d/nix.sh
+if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+  . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+fi
+if [[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]]; then
+    . $HOME/.nix-profile/etc/profile.d/nix.sh
+fi
 install_link .config/nixpkgs && update_nixpkgs || true
 setup_nixfonts
 
