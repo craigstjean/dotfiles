@@ -40,7 +40,22 @@ function install_link {
 }
 
 function install_nix {
-    sh <(curl -L https://nixos.org/nix/install) --no-daemon
+    case "$OSTYPE" in
+        darwin*)
+            sh <(curl -L https://nixos.org/nix/install)
+            ;;
+        linux*)
+            if grep -qi microsoft /proc/version; then
+                # WSL
+                sh <(curl -L https://nixos.org/nix/install) --no-daemon
+            else
+                sh <(curl -L https://nixos.org/nix/install) --daemon
+            fi
+            ;;
+        *)
+            echo "unsupported OSTYPE: $OSTYPE"
+            ;;
+    esac
 }
 
 function update_nixpkgs {
