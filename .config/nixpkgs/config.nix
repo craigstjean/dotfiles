@@ -37,6 +37,7 @@ in {
   packageOverrides = nixpkgs: with nixpkgs; rec {
     myPackages = with pkgs; buildEnv {
       name = "my-packages";
+
       paths = [
         fd
         ripgrep
@@ -46,7 +47,8 @@ in {
         zip
         nixfmt
 
-        vim
+        python3Full
+        vimHugeX
 
         emacsNativeComp
         gnutls
@@ -72,7 +74,7 @@ in {
       ];
     };
 
-    myDesktop  = with pkgs; buildEnv {
+    myDesktop = with pkgs; buildEnv {
       name = "my-desktop";
       paths = [
         gnome.gnome-session.sessions

@@ -11,24 +11,31 @@ function dump_requirements {
     exit 1
 }
 
-function setup_zshrc {
-    sl="$HOME/.zshrc"
-    if [ -L ${sl} ]; then
-        if [ -e ${sl} ]; then
-            echo "$sl is already a symlink"
+function install_link {
+    relative="$1"
+    absolute="$HOME/$1"
+    basepath="$(dirname $absolute)/"
+
+    if [ -L ${absolute} ]; then
+        if [ -e ${absolute} ]; then
+            echo "$absolute is already a symlink"
+            false
         else
-            echo "$sl is broken, restoring"
-            unlink "$sl"
-            ln -s "$(pwd -P)/.zshrc" "$HOME/"
+            echo "$absolute is broken, restoring"
+            unlink "$absolute"
+            ln -s "$(pwd -P)/$relative" "$basepath"
+            true
         fi
-    elif [ -e ${sl} ]; then
-        echo "$sl already exists but is not symlinked, moving it to $sl.old"
-        mv "$sl" "$sl.old"
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/.zshrc" "$HOME/"
+    elif [ -e ${absolute} ]; then
+        echo "$absolute already exists but is not symlinked, moving it to $absolute.old"
+        mv "$absolute" "$absolute.old"
+        echo "creating symlink for $absolute"
+        ln -s "$(pwd -P)/$relative" "$basepath"
+        true
     else
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/.zshrc" "$HOME/"
+        echo "creating symlink for $absolute"
+        ln -s "$(pwd -P)/$relative" "$basepath"
+        true
     fi
 }
 
@@ -44,82 +51,14 @@ function update_nixpkgs {
     nix-env -i my-desktop
 }
 
-function setup_nixpkgs {
-    sl="$HOME/.config/nixpkgs"
-    if [ -L ${sl} ]; then
-        if [ -e ${sl} ]; then
-            echo "$sl is already a symlink"
-        else
-            echo "$sl is broken, restoring"
-            unlink "$sl"
-            ln -s "$(pwd -P)/.config/nixpkgs" "$HOME/.config/"
-            update_nixpkgs
-        fi
-    elif [ -e ${sl} ]; then
-        echo "$sl already exists but is not symlinked, moving it to $sl.old"
-        mv "$sl" "$sl.old"
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/.config/nixpkgs" "$HOME/.config/"
-        update_nixpkgs
-    else
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/.config/nixpkgs" "$HOME/.config/"
-        update_nixpkgs
-    fi
-}
-
 function setup_nixfonts {
     mkdir -p "$HOME/.config/fontconfig/conf.d/"
-    sl="$HOME/.config/fontconfig/conf.d/10-nix-fonts.conf"
-    if [ -L ${sl} ]; then
-        if [ -e ${sl} ]; then
-            echo "$sl is already a symlink"
-        else
-            echo "$sl is broken, restoring"
-            unlink "$sl"
-            ln -s "$(pwd -P)/.config/fontconfig/conf.d/10-nix-fonts.conf" "$HOME/.config/fontconfig/conf.d/"
-	    fc-cache -f
-        fi
-    elif [ -e ${sl} ]; then
-        echo "$sl already exists but is not symlinked, moving it to $sl.old"
-        mv "$sl" "$sl.old"
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/.config/fontconfig/conf.d/10-nix-fonts.conf" "$HOME/.config/fontconfig/conf.d/"
-	fc-cache -f
-    else
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/.config/fontconfig/conf.d/10-nix-fonts.conf" "$HOME/.config/fontconfig/conf.d/"
-	fc-cache -f
-    fi
+    install_link .config/fontconfig/conf.d/10-nix-fonts.conf && fc-cache -f || true
 }
 
 function install_doom_emacs {
     git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
     yes | ~/.emacs.d/bin/doom install
-}
-
-function setup_doom_d {
-    sl="$HOME/.doom.d"
-    if [ -L ${sl} ]; then
-        if [ -e ${sl} ]; then
-            echo "$sl is already a symlink"
-        else
-            echo "$sl is broken, restoring"
-            unlink "$sl"
-            ln -s "$(pwd -P)/.doom.d" "$HOME/"
-	    $HOME/.emacs.d/bin/doom sync
-        fi
-    elif [ -e ${sl} ]; then
-        echo "$sl already exists but is not symlinked, moving it to $sl.old"
-        mv "$sl" "$sl.old"
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/.doom.d" "$HOME/"
-        $HOME/.emacs.d/bin/doom sync
-    else
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/.doom.d" "$HOME/"
-        $HOME/.emacs.d/bin/doom sync
-    fi
 }
 
 function install_nvm {
@@ -132,41 +71,33 @@ function install_nvm {
     nvm alias default node
 }
 
-function setup_bin {
-    sl="$HOME/bin/nix-go"
-    if [ -L ${sl} ]; then
-        if [ -e ${sl} ]; then
-            echo "$sl is already a symlink"
-        else
-            echo "$sl is broken, restoring"
-            unlink "$sl"
-            ln -s "$(pwd -P)/bin/nix-go" "$HOME/bin/"
-        fi
-    elif [ -e ${sl} ]; then
-        echo "$sl already exists but is not symlinked, moving it to $sl.old"
-        mv "$sl" "$sl.old"
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/bin/nix-go" "$HOME/bin/"
-    else
-        echo "creating symlink for $sl"
-        ln -s "$(pwd -P)/bin/nix-go" "$HOME/bin/"
-    fi
-}
-
 is_in_path git || dump_requirements
 
 echo "#################"
 echo "##     ZSH     ##"
 echo "#################"
-setup_zshrc
+install_link .zshrc || true
 
 echo
 echo "#################"
 echo "##     NIX     ##"
 echo "#################"
 is_in_path nix-env && echo "nix already installed" || install_nix
-setup_nixpkgs
+install_link .config/nixpkgs && update_nixpkgs || true
 setup_nixfonts
+
+echo
+echo "#################"
+echo "##     Vim     ##"
+echo "#################"
+install_link .vimrc || true
+if [[ -f $HOME/.vim/autoload/plug.vim ]]; then
+    echo "vim plug already installed"
+else
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    vim +"PlugInstall --sync" +qa
+fi
 
 echo
 echo "#################"
@@ -181,7 +112,8 @@ elif [[ -d $HOME/.emacs.d ]]; then
 else
     install_doom_emacs
 fi
-setup_doom_d
+
+install_link .doom.d && $HOME/.emacs.d/bin/doom sync || true
 
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
@@ -210,7 +142,13 @@ is_in_path stylelint && echo "stylelint already installed" || npm i -g stylelint
 
 echo
 echo "#################"
+echo "##    tmux     ##"
+echo "#################"
+install_link .tmux.conf || true
+
+echo
+echo "#################"
 echo "##  User bin   ##"
 echo "#################"
-setup_bin
+install_link bin/nix-go || true
 
