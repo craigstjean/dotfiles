@@ -179,6 +179,7 @@ fi
 is_in_path typescript-language-server && echo "typescript-language-server already installed" || npm i -g typescript-language-server
 is_in_path js-beautify && echo "js-beautify already installed" || npm i -g js-beautify
 is_in_path stylelint && echo "stylelint already installed" || npm i -g stylelint
+is_in_path yarn && echo "yarn already installed" || npm i -g yarn
 
 echo
 echo "#################"
