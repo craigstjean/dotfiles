@@ -119,3 +119,6 @@ export PATH=$PATH:$HOME/bin
 alias ls='exa'
 #alias cat='bat'
 
+export NODE_OPTIONS=--openssl-legacy-provider
+alias code='NODE_OPTIONS= code'
+
