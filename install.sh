@@ -2,6 +2,17 @@
 
 set -e
 
+if [ -f /etc/os-release ]; then
+    case $(uname -n) in
+        nixos)
+            echo Do not use this in NixOS, see nixos directory
+            exit
+            ;;
+        *)
+            ;;
+    esac
+fi
+
 function is_in_path {
     builtin type -P "$1" &> /dev/null
 }
