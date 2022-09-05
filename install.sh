@@ -122,7 +122,8 @@ fi
 if [[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]]; then
     . $HOME/.nix-profile/etc/profile.d/nix.sh
 fi
-install_link .config/nixpkgs && update_nixpkgs || true
+install_link .config/nixpkgs || true
+update_nixpkgs
 setup_nixfonts
 
 echo

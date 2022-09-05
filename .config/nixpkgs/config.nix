@@ -96,7 +96,7 @@ in {
         at-spi2-core
 
         fontconfig
-      ] ++ fonts.fonts;
+      ] ++ config.fonts.fonts;
     };
 
     myVscode = with pkgs; buildEnv {
