@@ -107,6 +107,10 @@ function install_nvm {
     nvm alias default 16
 }
 
+function install_rust {
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
+
 is_in_path git || dump_requirements
 
 echo "#################"
@@ -202,8 +206,26 @@ install_link .tmux.conf || true
 
 echo
 echo "#################"
+echo "##    rust     ##"
+echo "#################"
+is_in_path rustup && echo "rustup already installed" || install_rust
+. "$HOME/.cargo/env"
+rustup update
+is_in_path zoxide && echo "zoxide already installed" || cargo install zoxide
+is_in_path kondo && echo "kondo already installed" || cargo install kondo
+is_in_path tokei && echo "tokei already installed" || cargo install tokei
+is_in_path starship && echo "starship already installed" || cargo install starship
+is_in_path nu && echo "nu already installed" || cargo install nu
+is_in_path git-delta && echo "git-delta already installed" || cargo install git-delta
+is_in_path cargo-update && echo "cargo-update already installed" || cargo install cargo-update
+is_in_path cargo-binstall && echo "cargo-binstall already installed" || cargo install cargo-binstall
+is_in_path zellij && echo "zellij already installed" || cargo binstall zellij
+
+echo
+echo "#################"
 echo "##  User bin   ##"
 echo "#################"
 mkdir -p $HOME/bin
 install_link bin/nix-go || true
+install_link .gitconfig || true
 
