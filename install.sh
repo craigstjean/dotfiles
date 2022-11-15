@@ -87,24 +87,18 @@ function update_nixpkgs {
     esac
 }
 
-function setup_nixfonts {
-    mkdir -p "$HOME/.config/fontconfig/conf.d/"
-    install_link .config/fontconfig/conf.d/10-nix-fonts.conf && fc-cache -f || true
+function install_home_manager {
+    nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz
+    nix-channel --update
+
+    export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH}
+
+    nix-shell '<home-manager>' -A install
 }
 
 function install_doom_emacs {
     git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
     yes | ~/.emacs.d/bin/doom install
-}
-
-function install_nvm {
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-    nvm install --lts
-    nvm use --lts
-    nvm alias default 16
 }
 
 function install_rust {
@@ -139,7 +133,10 @@ if [[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]]; then
 fi
 install_link .config/nixpkgs || true
 update_nixpkgs
-setup_nixfonts
+if [[ ! -f $HOME/.nix-profile/bin/home-manager ]]; then
+    install_home_manager
+fi
+home-manager switch
 
 echo
 echo "#################"
@@ -187,11 +184,8 @@ echo
 echo "#################"
 echo "##    Node     ##"
 echo "#################"
-if [[ -d $HOME/.nvm ]]; then
-    echo "nvm already installed"
-else
-    install_nvm
-fi
+mkdir -p $HOME/.npm-global
+npm config set prefix '~/.npm-global'
 is_in_path typescript-language-server && echo "typescript-language-server already installed" || npm i -g typescript-language-server
 is_in_path js-beautify && echo "js-beautify already installed" || npm i -g js-beautify
 is_in_path stylelint && echo "stylelint already installed" || npm i -g stylelint
@@ -214,18 +208,16 @@ rustup update
 is_in_path zoxide && echo "zoxide already installed" || cargo install zoxide
 is_in_path kondo && echo "kondo already installed" || cargo install kondo
 is_in_path tokei && echo "tokei already installed" || cargo install tokei
-is_in_path starship && echo "starship already installed" || cargo install starship
-is_in_path nu && echo "nu already installed" || cargo install nu
+is_in_path starship && echo "starship already installed" || nix-shell -p pkgconfig openssl --run 'cargo install starship --locked'
+is_in_path nu && echo "nu already installed" || nix-shell -p pkgconfig openssl --run 'cargo install nu'
 is_in_path git-delta && echo "git-delta already installed" || cargo install git-delta
-is_in_path cargo-update && echo "cargo-update already installed" || cargo install cargo-update
+is_in_path cargo-update && echo "cargo-update already installed" || nix-shell -p pkgconfig openssl --run 'cargo install cargo-update'
 is_in_path cargo-binstall && echo "cargo-binstall already installed" || cargo install cargo-binstall
-is_in_path zellij && echo "zellij already installed" || cargo binstall zellij
+is_in_path zellij && echo "zellij already installed" || yes | cargo binstall zellij
 
 echo
 echo "#################"
 echo "##  User bin   ##"
 echo "#################"
-mkdir -p $HOME/bin
-install_link bin/nix-go || true
 install_link .gitconfig || true
 

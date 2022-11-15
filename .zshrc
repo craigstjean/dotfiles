@@ -102,24 +102,31 @@ source $ZSH/oh-my-zsh.sh
 
 if [ -e /home/craig/.nix-profile/etc/profile.d/nix.sh ]; then . /home/craig/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
+export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH}
+
 if [[ -n "$NIX_ENV" ]]; then
     OPROMPT="$PROMPT"
     PROMPT=$(echo $OPROMPT | sed 's/\(->%{\$fg_bold\[blue\]%} \)%/\1nix-'$NIX_ENV' %/')
 fi
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
 export PATH=$PATH:$HOME/bin
 
-alias ls='exa'
+#alias ls='exa'
 #alias cat='bat'
 
 # Uncomment if using Node 18.x
 #export NODE_OPTIONS=--openssl-legacy-provider
 #alias code='NODE_OPTIONS= code'
+
+export PATH=$PATH:$HOME/.npm-global/bin
+export PATH=$PATH:$HOME/.cargo/bin
+
+eval "$(direnv hook zsh)"
+
+if [ -f /usr/lib/locale/locale-archive ]; then
+    export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive
+fi
 
