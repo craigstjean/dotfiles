@@ -68,7 +68,7 @@ case $distro in
             adobe-source-code-pro-fonts awesome-terminal-fonts noto-fonts \
             powerline-fonts \
             neovim python-pynvim emacs-nativecomp \
-            lightdm lightdm-gtk-greeter i3-gaps i3status i3lock xss-lock nitrogen \
+            xorg lightdm lightdm-gtk-greeter i3-gaps i3status i3lock xss-lock nitrogen \
             graphviz inotify-tools python-pipx \
             sqlite tidy tree-sitter wget xclip \
             tmux ripgrep fd bat exa fzf jq
