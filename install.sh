@@ -69,7 +69,7 @@ case $distro in
             powerline-fonts \
             neovim python-pynvim emacs-nativecomp \
             lightdm lightdm-gtk-greeter i3-gaps i3status i3lock xss-lock nitrogen \
-            graphviz inotify-tools \
+            graphviz inotify-tools python-pipx \
             sqlite tidy tree-sitter wget xclip \
             tmux ripgrep fd bat exa fzf jq
 
@@ -105,7 +105,7 @@ case $distro in
             cmake clang ninja-build erlang elixir golang \
             fonts-font-awesome fonts-powerline \
             neovim python3-neovim \
-            graphviz inotify-tools \
+            graphviz inotify-tools pipx \
             sqlite tidy libtree-sitter0 libtree-sitter-dev \
             tmux ripgrep fd-find bat exa fzf jq \
             pandoc shellcheck
@@ -136,7 +136,7 @@ case $distro in
             cmake clang ninja-build erlang elixir golang \
             adobe-source-code-pro-fonts fontawesome-fonts \
             neovim emacs \
-            graphviz inotify-tools \
+            graphviz inotify-tools pipx \
             sqlite tidy libtree-sitter tree-sitter-cli \
             tmux ripgrep fd-find bat exa fzf jq \
             pandoc ShellCheck
