@@ -350,6 +350,8 @@ if [ $is_parallels -eq 1 ]; then
             exit 1
             ;;
     esac
+    sudo systemctl enable vmtoolsd
+    sudo systemctl start vmtoolsd
 else
     echo "Parallels not detected"
 fi
