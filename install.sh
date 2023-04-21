@@ -275,6 +275,7 @@ is_in_path vue-language-server && echo "vue-language-server already installed" |
 
 mkdir -p $HOME/System/bin
 mkdir -p $HOME/System/src
+export PATH=$PATH:$HOME/.cache/rebar3/bin
 
 pushd $HOME/System/src
 wget https://s3.amazonaws.com/rebar3/rebar3 && chmod +x rebar3
