@@ -318,7 +318,7 @@ echo
 echo "####################"
 echo "##  VMWare Guest  ##"
 echo "####################"
-is_vmware = $(hostnamectl | grep -i "Hardware Model" | grep -i "VMware" | wc -l)
+is_vmware=$(hostnamectl | grep -i "Hardware Model" | grep -i "VMware" | wc -l)
 if [ $is_vmware -eq 1 ]; then
     echo "VMware Guest detected"
 else
@@ -329,7 +329,7 @@ echo
 echo "#######################"
 echo "##  Parallels Guest  ##"
 echo "#######################"
-is_parallels = $(hostnamectl | grep -i "Hardware Model" | grep -i "Parallels" | wc -l)
+is_parallels=$(hostnamectl | grep -i "Hardware Model" | grep -i "Parallels" | wc -l)
 if [ $is_parallels -eq 1 ]; then
     echo "Parallels Guest detected"
     install_link vm_guests/parallels/.xinitrc $HOME/.xinitrc || true
