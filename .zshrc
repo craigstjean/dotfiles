@@ -100,33 +100,21 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-if [ -e /home/craig/.nix-profile/etc/profile.d/nix.sh ]; then . /home/craig/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-
-export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH}
-
-if [[ -n "$NIX_ENV" ]]; then
-    OPROMPT="$PROMPT"
-    PROMPT=$(echo $OPROMPT | sed 's/\(->%{\$fg_bold\[blue\]%} \)%/\1nix-'$NIX_ENV' %/')
-fi
+export PATH=$PATH:$HOME/.cargo/bin
+export PATH=$PATH:$HOME/.local/bin
+export PATH=$PATH:$HOME/.cache/rebar3/bin
+export PATH=$PATH:$HOME/System/bin
 
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
-export PATH=$PATH:$HOME/bin
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-#alias ls='exa'
-#alias cat='bat'
+eval $(starship init zsh)
+eval $(zoxide init zsh)
 
-# Uncomment if using Node 18.x
-#export NODE_OPTIONS=--openssl-legacy-provider
-#alias code='NODE_OPTIONS= code'
-
-export PATH=$PATH:$HOME/.npm-global/bin
-export PATH=$PATH:$HOME/.cargo/bin
-
-eval "$(direnv hook zsh)"
-
-if [ -f /usr/lib/locale/locale-archive ]; then
-    export LOCALE_ARCHIVE=/usr/lib/locale/locale-archive
-fi
+alias luamake=/home/craig/System/src/lua-language-server/3rd/luamake/luamake
+export PATH=$PATH:$HOME/System/src/lua-language-server/bin
 

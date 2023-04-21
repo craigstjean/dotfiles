@@ -1,5 +1,5 @@
 require('nvim-treesitter.configs').setup {
-    ensure_installed = { 'help',
+    ensure_installed = { 
         'javascript', 'typescript', 'html', 'css', 'scss', 'json', 'tsx', 'vue',
         'c', 'cpp', 'cmake', 'make',
         'elixir', 'erlang',

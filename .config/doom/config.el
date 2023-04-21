@@ -81,6 +81,3 @@
       beacon-push-mark 10)
 (beacon-mode 1)
 
-(after! projectile
-  (add-to-list 'projectile-globally-ignored-directories "^\\node_modules$")
-  (add-to-list 'projectile-globally-ignored-directories "^\\deps$"))

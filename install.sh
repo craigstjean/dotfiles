@@ -2,17 +2,6 @@
 
 set -e
 
-if [ -f /etc/os-release ]; then
-    case $(uname -n) in
-        nixos)
-            echo Do not use this in NixOS, see nixos directory
-            exit
-            ;;
-        *)
-            ;;
-    esac
-fi
-
 function is_in_path {
     builtin type -P "$1" &> /dev/null
 }
@@ -25,6 +14,9 @@ function dump_requirements {
 function install_link {
     relative="$1"
     absolute="$HOME/$1"
+    if [ $# -eq 2 ]; then
+        absolute="$2"
+    fi
     basepath="$(dirname $absolute)/"
 
     if [ -L ${absolute} ]; then
@@ -50,55 +42,9 @@ function install_link {
     fi
 }
 
-function install_nix {
-    case "$OSTYPE" in
-        darwin*)
-            sh <(curl -L https://nixos.org/nix/install)
-            ;;
-        linux*)
-            if grep -qi microsoft /proc/version; then
-                # WSL
-                sh <(curl -L https://nixos.org/nix/install) --no-daemon
-            else
-                sh <(curl -L https://nixos.org/nix/install) --daemon
-            fi
-            ;;
-        *)
-            echo "unsupported OSTYPE: $OSTYPE"
-            ;;
-    esac
-}
-
-function update_nixpkgs {
-    echo "updating nix my-packages"
-    nix-env -i my-packages
-
-    case "$OSTYPE" in
-        linux*)
-            if grep -qi microsoft /proc/version; then
-                # WSL
-                echo "updating nix my-desktop"
-                nix-env -i my-desktop
-            fi
-            ;;
-        *)
-            echo "skipping nix my-desktop"
-            ;;
-    esac
-}
-
-function install_home_manager {
-    nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz
-    nix-channel --update
-
-    export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH}
-
-    nix-shell '<home-manager>' -A install
-}
-
 function install_doom_emacs {
-    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
-    yes | ~/.emacs.d/bin/doom install
+    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+    yes | ~/.config/emacs/bin/doom install
 }
 
 function install_rust {
@@ -107,6 +53,110 @@ function install_rust {
 
 is_in_path git || dump_requirements
 
+echo "####################"
+echo "##  Dependencies  ##"
+echo "####################"
+distro=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
+case $distro in
+    *"Arch Linux"*)
+        echo "Arch Linux detected"
+        sudo pacman -Syyu
+        sudo pacman -S --needed --noconfirm \
+            git base-devel \
+            curl zsh \
+            cmake clang ninja erlang elixir go \
+            adobe-source-code-pro-fonts awesome-terminal-fonts noto-fonts \
+            powerline-fonts \
+            neovim python-pynvim emacs-nativecomp \
+            lightdm lightdm-gtk-greeter i3-gaps i3status i3lock xss-lock nitrogen \
+            graphviz inotify-tools \
+            sqlite tidy tree-sitter wget xclip \
+            tmux ripgrep fd bat exa fzf jq
+
+        if [[ -d $HOME/System/aur/yay ]]; then
+            echo "yay already installed"
+            yay -Syu
+        else
+            mkdir -p $HOME/System/aur
+            pushd $HOME/System/aur
+            git clone https://aur.archlinux.org/yay.git
+            cd yay
+            makepkg -si
+            popd
+
+            yay -Y --gendb
+            yay -Syu --devel
+            yay -Y --devel --save
+        fi
+
+        is_in_path golangci-lint && echo "golangci-lint-bin already installed" || yay -S golangci-lint-bin
+        is_in_path pandoc && echo "pandoc-bin already installed" || yay -S pandoc-bin
+        is_in_path shellcheck && echo "shellcheck-bin already installed" || yay -S shellcheck-bin
+        is_in_path postman && echo "postman-bin already installed" || yay -S postman-bin
+        is_in_path subl && echo "sublime-text-dev already installed" || yay -S sublime-text-dev
+        is_in_path code && echo "visual-studio-code-bin already installed" || yay -S visual-studio-code-bin
+        ;;
+    *"Ubuntu"*)
+        echo "Ubuntu detected"
+        sudo apt update
+        sudo apt install -y \
+            build-essential git \
+            curl wget zsh \
+            cmake clang ninja-build erlang elixir golang \
+            fonts-font-awesome fonts-powerline \
+            neovim python3-neovim \
+            graphviz inotify-tools \
+            sqlite tidy libtree-sitter0 libtree-sitter-dev \
+            tmux ripgrep fd-find bat exa fzf jq \
+            pandoc shellcheck
+
+            wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
+            echo "deb https://download.sublimetext.com/ apt/dev/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+            sudo apt update
+            sudo apt install -y sublime-text
+
+            sudo snap install --classic code
+            sudo snap install --classic emacs
+
+            mkdir -p /tmp/adodefont
+            pushd /tmp/adodefont
+            wget https://github.com/adobe-fonts/source-code-pro/archive/1.017R.zip
+            unzip 1.017R.zip
+            mkdir -p ~/.fonts
+            cp source-code-pro-1.017R/OTF/*.otf ~/.fonts/
+            fc-cache -f -v
+            popd
+        ;;
+    *"Fedora"*)
+        echo "Fedora detected"
+        sudo dnf update
+        sudo dnf install -y \
+            git base-devel \
+            curl zsh \
+            cmake clang ninja-build erlang elixir golang \
+            adobe-source-code-pro-fonts fontawesome-fonts \
+            neovim emacs \
+            graphviz inotify-tools \
+            sqlite tidy libtree-sitter tree-sitter-cli \
+            tmux ripgrep fd-find bat exa fzf jq \
+            pandoc ShellCheck
+
+        sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+        sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+        sudo dnf check-update
+        sudo dnf install -y code
+
+        sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+        sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/dev/x86_64/sublime-text.repo
+        sudo dnf install -y sublime-text
+        ;;
+    *)
+        echo "Unsupported distro"
+        exit 1
+        ;;
+esac
+
+echo
 echo "#################"
 echo "##     ZSH     ##"
 echo "#################"
@@ -118,67 +168,50 @@ else
 fi
 
 echo
-echo "#################"
-echo "##     NIX     ##"
-echo "#################"
-if [[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]]; then
-    . $HOME/.nix-profile/etc/profile.d/nix.sh
-fi
-is_in_path nix-env && echo "nix already installed" || install_nix
-if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-  . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-fi
-if [[ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]]; then
-    . $HOME/.nix-profile/etc/profile.d/nix.sh
-fi
-install_link .config/nixpkgs || true
-update_nixpkgs
-if [[ ! -f $HOME/.nix-profile/bin/home-manager ]]; then
-    install_home_manager
-fi
-home-manager switch
-
-echo
-echo "#################"
-echo "##     Vim     ##"
-echo "#################"
-install_link .vimrc || true
-if [[ -f $HOME/.vim/autoload/plug.vim ]]; then
-    echo "vim plug already installed"
+echo "##################"
+echo "##    NeoVim    ##"
+echo "##################"
+install_link .config/nvim $HOME/.config/nvim || true
+if [[ -f $HOME/.local/share/nvim/site/pack/packer/start/packer.nvim ]]; then
+    echo "packer already installed"
 else
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    vim +"PlugInstall --sync" +qa
+    git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+     ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+    nvim +"PackerSync" +qa
 fi
 
 echo
 echo "#################"
 echo "## Doom Emacs  ##"
 echo "#################"
-if [[ -f $HOME/.emacs.d/bin/doom ]]; then
+if [[ -f $HOME/.config/emacs/bin/doom ]]; then
     echo "doom emacs already installed"
-elif [[ -d $HOME/.emacs.d ]]; then
-    echo "$HOME/.emacs.d already exists, setting it to $HOME/.emacs.d.old"
-    mv $HOME/.emacs.d $HOME/.emacs.d.old
+elif [[ -d $HOME/.config/emacs ]]; then
+    echo "$HOME/.config/emacs already exists, setting it to $HOME/.config/emacs.old"
+    mv $HOME/.config/emacs $HOME/.config/emacs.old
     install_doom_emacs
 else
     install_doom_emacs
 fi
 
-install_link .doom.d || true
-$HOME/.emacs.d/bin/doom sync
+install_link .config/doom $HOME/.config/doom || true
+$HOME/.config/emacs/bin/doom sync
 
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
-is_in_path gore && echo "gore already installed" || go install github.com/x-motemen/gore/cmd/gore@latest
-is_in_path gocode && echo "gocode already installed" || go install github.com/stamblerre/gocode@latest
-is_in_path godoc && echo "godoc already installed" || go install golang.org/x/tools/cmd/godoc@latest
-is_in_path goimports && echo "goimports already installed" || go install golang.org/x/tools/cmd/goimports@latest
-is_in_path gorename && echo "gorename already installed" || go install golang.org/x/tools/cmd/gorename@latest
-is_in_path guru && echo "guru already installed" || go install golang.org/x/tools/cmd/guru@latest
-is_in_path gotests && echo "gotests already installed" || go install github.com/cweill/gotests/gotests@latest
-is_in_path gomodifytags && echo "gomodifytags already installed" || go install github.com/fatih/gomodifytags@latest
-is_in_path gopls && echo "gopls already installed" || go install golang.org/x/tools/gopls@latest
+echo
+echo "#########"
+echo "## i3  ##"
+echo "#########"
+if [[ -d $HOME/.config/i3 ]]; then
+    echo "$HOME/.config/i3 already exists, setting it to $HOME/.config/i3.old"
+    mv $HOME/.config/i3 $HOME/.config/i3.old
+fi
+install_link .config/i3 $HOME/.config/i3 || true
+
+if [[ -d $HOME/.config/nitrogen ]]; then
+    echo "$HOME/.config/nitrogen already exists, setting it to $HOME/.config/nitrogen.old"
+    mv $HOME/.config/nitrogen $HOME/.config/nitrogen.old
+fi
+install_link .config/nitrogen $HOME/.config/nitrogen || true
 
 echo
 echo "#################"
@@ -205,6 +238,7 @@ echo "#################"
 is_in_path rustup && echo "rustup already installed" || install_rust
 . "$HOME/.cargo/env"
 rustup update
+rustup default stable
 is_in_path zoxide && echo "zoxide already installed" || cargo install zoxide
 is_in_path kondo && echo "kondo already installed" || cargo install kondo
 is_in_path tokei && echo "tokei already installed" || cargo install tokei
@@ -216,8 +250,87 @@ is_in_path cargo-binstall && echo "cargo-binstall already installed" || cargo in
 is_in_path zellij && echo "zellij already installed" || yes | cargo binstall zellij
 
 echo
+echo "#######################"
+echo "## LSP Requirements  ##"
+echo "#######################"
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+is_in_path gore && echo "gore already installed" || go install github.com/x-motemen/gore/cmd/gore@latest
+is_in_path gocode && echo "gocode already installed" || go install github.com/stamblerre/gocode@latest
+is_in_path godoc && echo "godoc already installed" || go install golang.org/x/tools/cmd/godoc@latest
+is_in_path goimports && echo "goimports already installed" || go install golang.org/x/tools/cmd/goimports@latest
+is_in_path gorename && echo "gorename already installed" || go install golang.org/x/tools/cmd/gorename@latest
+is_in_path guru && echo "guru already installed" || go install golang.org/x/tools/cmd/guru@latest
+is_in_path gotests && echo "gotests already installed" || go install github.com/cweill/gotests/gotests@latest
+is_in_path gomodifytags && echo "gomodifytags already installed" || go install github.com/fatih/gomodifytags@latest
+is_in_path gopls && echo "gopls already installed" || go install golang.org/x/tools/gopls@latest
+
+is_in_path cmake-language-server && echo "cmake-language-server already installed" || pipx install cmake-language-server
+is_in_path vscode-html-language-server && echo "vscode-langservers-extracted already installed" || npm i -g vscode-langservers-extracted
+is_in_path tsc && echo "typescript already installed" || npm i -g typescript
+is_in_path typescript-language-server && echo "typescript-language-server already installed" || npm i -g typescript-language-server
+is_in_path vue-language-server && echo "vue-language-server already installed" || npm i -g @volar/vue-language-server
+
+mkdir -p $HOME/System/bin
+mkdir -p $HOME/System/src
+
+pushd $HOME/System/src
+wget https://s3.amazonaws.com/rebar3/rebar3 && chmod +x rebar3
+./rebar3 local install
+git clone https://github.com/erlang-ls/erlang_ls.git
+cd erlang_ls
+make
+PREFIX=$HOME/System make install
+popd
+
+pushd $HOME/System/src
+git clone https://github.com/elixir-lsp/elixir-ls.git
+cd elixir-ls
+mix deps.get
+MIX_ENV=prod mix compile
+MIX_ENV=prod mix elixir_ls.release -o $HOME/System/bin
+popd
+
+pushd $HOME/System/src
+git clone https://github.com/LuaLS/lua-language-server
+cd lua-language-server
+./make.sh
+popd
+
+echo
 echo "#################"
 echo "##  User bin   ##"
 echo "#################"
 install_link .gitconfig || true
+
+echo
+echo "###################"
+echo "##  Wallpapers   ##"
+echo "###################"
+mkdir -p $HOME/System/wallpapers
+install_link bsod.jpg $HOME/System/wallpapers/bsod.jpg || true
+install_link desktop-1920x1080.jpg $HOME/System/wallpapers/desktop-1920x1080 || true
+
+echo
+echo "####################"
+echo "##  VMWare Guest  ##"
+echo "####################"
+is_vmware = $(hostnamectl | grep -i "Hardware Model" | grep -i "VMware" | wc -l)
+if [ $is_vmware -eq 1 ]; then
+    echo "VMware Guest detected"
+else
+    echo "VMware not detected"
+fi
+
+echo
+echo "#######################"
+echo "##  Parallels Guest  ##"
+echo "#######################"
+is_parallels = $(hostnamectl | grep -i "Hardware Model" | grep -i "Parallels" | wc -l)
+if [ $is_parallels -eq 1 ]; then
+    echo "Parallels Guest detected"
+    install_link vm_guests/parallels/.xinitrc $HOME/.xinitrc || true
+else
+    echo "Parallels not detected"
+fi
 
