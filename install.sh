@@ -333,6 +333,23 @@ is_parallels=$(hostnamectl | grep -i "Hardware Model" | grep -i "Parallels" | wc
 if [ $is_parallels -eq 1 ]; then
     echo "Parallels Guest detected"
     install_link vm_guests/parallels/.xinitrc $HOME/.xinitrc || true
+    case $distro in
+        *"Arch Linux"*)
+            sudo pacman -S --needed --noconfirm open-vm-tools
+            ;;
+        *"Ubuntu"*)
+            echo "Ubuntu detected"
+            sudo apt install -y open-vm-tools-desktop
+            ;;
+        *"Fedora"*)
+            echo "Fedora detected"
+            sudo dnf install -y open-vm-tools
+            ;;
+        *)
+            echo "Unsupported distro"
+            exit 1
+            ;;
+    esac
 else
     echo "Parallels not detected"
 fi
