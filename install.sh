@@ -217,8 +217,10 @@ echo
 echo "#################"
 echo "##    Node     ##"
 echo "#################"
-mkdir -p $HOME/.npm-global
-npm config set prefix '~/.npm-global'
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+. "$HOME/.nvm/nvm.sh"
+nvm install --lts
+nvm use --lts
 is_in_path typescript-language-server && echo "typescript-language-server already installed" || npm i -g typescript-language-server
 is_in_path js-beautify && echo "js-beautify already installed" || npm i -g js-beautify
 is_in_path stylelint && echo "stylelint already installed" || npm i -g stylelint
