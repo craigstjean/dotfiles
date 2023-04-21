@@ -244,10 +244,10 @@ rustup default stable
 is_in_path zoxide && echo "zoxide already installed" || cargo install zoxide
 is_in_path kondo && echo "kondo already installed" || cargo install kondo
 is_in_path tokei && echo "tokei already installed" || cargo install tokei
-is_in_path starship && echo "starship already installed" || nix-shell -p pkgconfig openssl --run 'cargo install starship --locked'
-is_in_path nu && echo "nu already installed" || nix-shell -p pkgconfig openssl --run 'cargo install nu'
+is_in_path starship && echo "starship already installed" || cargo install starship --locked
+is_in_path nu && echo "nu already installed" || cargo install nu
 is_in_path git-delta && echo "git-delta already installed" || cargo install git-delta
-is_in_path cargo-update && echo "cargo-update already installed" || nix-shell -p pkgconfig openssl --run 'cargo install cargo-update'
+is_in_path cargo-update && echo "cargo-update already installed" || cargo install cargo-update
 is_in_path cargo-binstall && echo "cargo-binstall already installed" || cargo install cargo-binstall
 is_in_path zellij && echo "zellij already installed" || yes | cargo binstall zellij
 
