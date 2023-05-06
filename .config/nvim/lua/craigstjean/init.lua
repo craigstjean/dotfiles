@@ -1,4 +1,3 @@
-require("craigstjean.packer")
 require("craigstjean.set")
 require("craigstjean.remap")
 
@@ -32,4 +31,6 @@ autocmd({"BufWritePre"}, {
 vim.g.netrw_browse_split = 0
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
+
+require("craigstjean.packer")
 
