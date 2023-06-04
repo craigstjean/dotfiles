@@ -247,6 +247,11 @@ is_in_path tokei && echo "tokei already installed" || cargo install tokei
 is_in_path starship && echo "starship already installed" || cargo install starship --locked
 is_in_path nu && echo "nu already installed" || cargo install nu
 is_in_path git-delta && echo "git-delta already installed" || cargo install git-delta
+is_in_path du-dust && echo "du-dust already installed" || cargo install du-dust
+is_in_path exa && echo "exa already installed" || cargo install exa
+is_in_path bat && echo "bat already installed" || cargo install bat
+is_in_path mprocs && echo "mprocs already installed" || cargo install mprocs
+is_in_path gitui && echo "gitui already installed" || cargo install gitui
 is_in_path cargo-update && echo "cargo-update already installed" || cargo install cargo-update
 is_in_path cargo-binstall && echo "cargo-binstall already installed" || cargo install cargo-binstall
 is_in_path zellij && echo "zellij already installed" || yes | cargo binstall zellij
@@ -266,6 +271,7 @@ is_in_path guru && echo "guru already installed" || go install golang.org/x/tool
 is_in_path gotests && echo "gotests already installed" || go install github.com/cweill/gotests/gotests@latest
 is_in_path gomodifytags && echo "gomodifytags already installed" || go install github.com/fatih/gomodifytags@latest
 is_in_path gopls && echo "gopls already installed" || go install golang.org/x/tools/gopls@latest
+is_in_path air && echo "air already installed" || go install github.com/cosmtrek/air@latest
 
 is_in_path cmake-language-server && echo "cmake-language-server already installed" || pipx install cmake-language-server
 is_in_path vscode-html-language-server && echo "vscode-langservers-extracted already installed" || npm i -g vscode-langservers-extracted
