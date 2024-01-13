@@ -2,21 +2,26 @@ local lsp = require('lsp-zero')
 
 lsp.preset('recommended')
 
-lsp.ensure_installed({
-    --'clangd',
-    'cmake',
-    'cssls',
-    'elixirls',
-    'erlangls',
-    'eslint',
-    'gopls',
-    'html',
-    'jsonls',
-    'lua_ls',
-    'rust_analyzer',
-    'tsserver',
-    'volar',
+require('mason').setup({})
+require('mason-lspconfig').setup({
+    ensure_installed = {
+        'clangd',
+        'cmake',
+        'cssls',
+        'elixirls',
+        'erlangls',
+        'eslint',
+        'gopls',
+        'html',
+        'jsonls',
+        'lua_ls',
+        'rust_analyzer',
+        'tsserver',
+        'volar',
+    }
 })
+
+pcall(vim.cmd, 'MasonUpdate')
 
 lsp.configure('lua_ls', {
     settings = {
@@ -30,7 +35,7 @@ lsp.configure('lua_ls', {
 
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
-local cmp_mappings = lsp.defaults.cmp_mappings({
+local cmp_mappings = cmp.mapping.preset.insert({
     ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
     ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
     ['<C-y>'] = cmp.mapping.confirm({ select = true }),
@@ -40,7 +45,7 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 cmp_mappings['<Tab>'] = nil
 cmp_mappings['<S-Tab>'] = nil
 
-lsp.setup_nvim_cmp({
+cmp.setup({
     mapping = cmp_mappings
 })
 

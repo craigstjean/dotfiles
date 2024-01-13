@@ -1,0 +1,37 @@
+return require('lazy').setup({
+	{
+		'nvim-telescope/telescope.nvim',
+		tag = '0.1.5',
+		dependencies = { 'nvim-lua/plenary.nvim' }
+	},
+	{ 'rose-pine/neovim', name = 'rose-pine' },
+	{'folke/which-key.nvim'},
+	{
+		'folke/trouble.nvim',
+		dependencies = { 'nvim-tree/nvim-web-devicons' },
+	},
+	{'nvim-treesitter/nvim-treesitter'},
+	{'nvim-treesitter/playground'},
+	{'theprimeagen/harpoon'},
+	{'theprimeagen/refactoring.nvim'},
+	{'mbbill/undotree'},
+	{'tpope/vim-fugitive'},
+	{'nvim-treesitter/nvim-treesitter-context'},
+	{'williamboman/mason.nvim'},
+	{'williamboman/mason-lspconfig.nvim'},
+	{'VonHeikemen/lsp-zero.nvim', branch = 'v3.x'},
+	{'neovim/nvim-lspconfig'},
+	{'hrsh7th/cmp-nvim-lsp'},
+	{'hrsh7th/nvim-cmp'},
+	{'L3MON4D3/LuaSnip'},
+	{'hrsh7th/cmp-buffer'},
+	{'hrsh7th/cmp-path'},
+	{'saadparwaiz1/cmp_luasnip'},
+	{'hrsh7th/cmp-nvim-lua'},
+	{'rafamadriz/friendly-snippets'},
+	{'folke/zen-mode.nvim'},
+	{'github/copilot.vim'},
+	{'laytan/cloak.nvim'},
+	{'nanotee/zoxide.vim'},
+})
+
