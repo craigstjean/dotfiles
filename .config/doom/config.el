@@ -15,7 +15,7 @@
 ;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
 ;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
 ;;   presentations or streaming.
-;; - `doom-unicode-font' -- for unicode glyphs
+;; - `doom-symbol-font' -- for symbols
 ;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
 ;;
 ;; See 'C-h v doom-font' for documentation and more examples of what they
@@ -29,6 +29,12 @@
 ;; refresh your font settings. If Emacs still can't find your font, it likely
 ;; wasn't installed correctly. Font issues are rarely Doom issues!
 
+(setq doom-font (font-spec :family "Source Code Pro" :size 13))
+
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+(setq doom-theme 'doom-one)
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
@@ -81,3 +87,61 @@
       beacon-push-mark 10)
 (beacon-mode 1)
 
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+(after! (evil copilot)
+  (add-to-list 'copilot-indentation-alist
+               '(cpp-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(javascript-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(js-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(js2-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(go-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(org-mode 2))
+  (add-to-list 'copilot-indentation-alist
+               '(elixir-mode 2))
+  (add-to-list 'copilot-indentation-alist
+               '(web-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(css-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(sass-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(ssass-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(vue-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(mermaid-mode 4))
+  (add-to-list 'copilot-indentation-alist
+               '(emacs-lisp-mode 2)))
+
+(after! projectile
+  (add-to-list 'projectile-globally-ignored-directories "node_modules")
+  (add-to-list 'projectile-globally-ignored-directories ".git")
+  (add-to-list 'projectile-globally-ignored-directories ".idea")
+  (add-to-list 'projectile-globally-ignored-directories ".vscode"))
+
+;; (add-hook 'vue-mode-hook #'lsp!)
+;; (use-package! tree-sitter
+;;   :config
+;;   (require 'tree-sitter-langs)
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(add-hook 'elixir-mode-hook
+          (lambda ()
+            (setq-local indent-tabs-mode nil)
+            (setq-local tab-width 2)
+            (setq-local evil-shift-width 2)))
+
+(use-package! lsp-volar)
