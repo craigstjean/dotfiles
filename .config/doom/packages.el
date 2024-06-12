@@ -16,6 +16,8 @@
 (package! copilot
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el" "dist")))
 (package! mermaid-mode)
+(package! ob-http)
+(package! sound-wav)
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;; (package! some-package)

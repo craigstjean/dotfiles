@@ -109,8 +109,6 @@
   (add-to-list 'copilot-indentation-alist
                '(org-mode 2))
   (add-to-list 'copilot-indentation-alist
-               '(elixir-mode 2))
-  (add-to-list 'copilot-indentation-alist
                '(web-mode 4))
   (add-to-list 'copilot-indentation-alist
                '(css-mode 4))
@@ -138,10 +136,31 @@
 ;;   (global-tree-sitter-mode)
 ;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-(add-hook 'elixir-mode-hook
-          (lambda ()
-            (setq-local indent-tabs-mode nil)
-            (setq-local tab-width 2)
-            (setq-local evil-shift-width 2)))
-
 (use-package! lsp-volar)
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t)
+   (python . t)
+   (emacs-lisp . t)
+   (js . t)
+   (typescript . t)
+   (css . t)
+   (sass . t)
+   (scss . t)
+   (mermaid . t)
+   (plantuml . t)
+   (sql . t)
+   (go . t)
+   (java . t)
+   (ruby . t)
+   (rust . t)
+   (haskell . t)
+   (elixir . t)
+   (lisp . t)
+   (http . t)
+   (awk . t)
+   (latex . t)))
+
+(setq display-line-numbers-type 'relative)
+
