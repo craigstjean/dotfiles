@@ -109,6 +109,8 @@
   (add-to-list 'copilot-indentation-alist
                '(org-mode 2))
   (add-to-list 'copilot-indentation-alist
+               '(elixir-mode 2))
+  (add-to-list 'copilot-indentation-alist
                '(web-mode 4))
   (add-to-list 'copilot-indentation-alist
                '(css-mode 4))
@@ -135,6 +137,12 @@
 ;;   (require 'tree-sitter-langs)
 ;;   (global-tree-sitter-mode)
 ;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(add-hook 'elixir-mode-hook
+          (lambda ()
+            (setq-local indent-tabs-mode nil)
+            (setq-local tab-width 2)
+            (setq-local evil-shift-width 2)))
 
 (use-package! lsp-volar)
 
