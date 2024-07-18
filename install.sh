@@ -71,7 +71,7 @@ case $distro in
             xorg lightdm lightdm-gtk-greeter i3-gaps i3status i3lock xss-lock nitrogen \
             graphviz inotify-tools python-pipx \
             sqlite tidy tree-sitter wget xclip \
-            tmux ripgrep fd bat exa fzf jq
+            tmux ripgrep fd bat eza fzf jq
 
         if [[ -d $HOME/System/aur/yay ]]; then
             echo "yay already installed"
@@ -107,7 +107,7 @@ case $distro in
             neovim python3-neovim \
             graphviz inotify-tools pipx \
             sqlite tidy libtree-sitter0 libtree-sitter-dev \
-            tmux ripgrep fd-find bat exa fzf jq \
+            tmux ripgrep fd-find bat eza fzf jq \
             pandoc shellcheck
 
             wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
@@ -138,7 +138,7 @@ case $distro in
             neovim emacs \
             graphviz inotify-tools pipx \
             sqlite tidy libtree-sitter tree-sitter-cli \
-            tmux ripgrep fd-find bat exa fzf jq \
+            tmux ripgrep fd-find bat eza fzf jq \
             pandoc ShellCheck
 
         sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
@@ -248,7 +248,7 @@ is_in_path starship && echo "starship already installed" || cargo install starsh
 is_in_path nu && echo "nu already installed" || cargo install nu
 is_in_path git-delta && echo "git-delta already installed" || cargo install git-delta
 is_in_path du-dust && echo "du-dust already installed" || cargo install du-dust
-is_in_path exa && echo "exa already installed" || cargo install exa
+is_in_path eza && echo "eza already installed" || cargo install eza
 is_in_path bat && echo "bat already installed" || cargo install bat
 is_in_path mprocs && echo "mprocs already installed" || cargo install mprocs
 is_in_path gitui && echo "gitui already installed" || cargo install gitui

@@ -123,6 +123,8 @@
   (add-to-list 'copilot-indentation-alist
                '(mermaid-mode 4))
   (add-to-list 'copilot-indentation-alist
+               '(typescript-mode 4))
+  (add-to-list 'copilot-indentation-alist
                '(emacs-lisp-mode 2)))
 
 (after! projectile
